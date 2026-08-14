@@ -26,6 +26,21 @@ if (RAZORPAY_KEY_ID && RAZORPAY_KEY_SECRET) {
   console.warn('⚠️  RAZORPAY_KEY_ID / RAZORPAY_KEY_SECRET not set in .env — payment endpoints will return an error until you add them.');
 }
 
+// ---------- Admin protection ----------
+// Set ADMIN_KEY in your environment. Without it, admin endpoints are locked (fail closed).
+const ADMIN_KEY = process.env.ADMIN_KEY || '';
+
+function requireAdmin(req, res, next) {
+  if (!ADMIN_KEY) {
+    return res.status(500).json({ error: 'ADMIN_KEY is not set on the server. Admin access is disabled until it is configured.' });
+  }
+  const provided = req.get('x-admin-key') || req.query.key || '';
+  if (provided !== ADMIN_KEY) {
+    return res.status(403).json({ error: 'Invalid or missing admin key.' });
+  }
+  next();
+}
+
 // ---------- Simple JSON-file storage ----------
 function readRegistrations() {
   if (!fs.existsSync(DATA_FILE)) return [];
@@ -73,17 +88,27 @@ app.post('/api/register', (req, res) => {
   res.json({ ok: true, registrationId: id, record });
 });
 
-// ---------- List all registrations (simple admin view) ----------
-app.get('/api/registrations', (req, res) => {
+// ---------- List all registrations (admin only) ----------
+app.get('/api/registrations', requireAdmin, (req, res) => {
   res.json(readRegistrations());
 });
 
-// ---------- Get one registration ----------
-app.get('/api/registrations/:id', (req, res) => {
+// ---------- Get one registration (admin only) ----------
+app.get('/api/registrations/:id', requireAdmin, (req, res) => {
   const list = readRegistrations();
   const record = list.find(r => r.id === req.params.id);
   if (!record) return res.status(404).json({ error: 'Not found' });
   res.json(record);
+});
+
+// ---------- Status summary counts (admin only) ----------
+app.get('/api/registrations-summary', requireAdmin, (req, res) => {
+  const list = readRegistrations();
+  const summary = { total: list.length, paid: 0, pending_payment: 0, payment_verification_failed: 0 };
+  list.forEach(r => {
+    if (summary[r.status] !== undefined) summary[r.status]++;
+  });
+  res.json(summary);
 });
 
 // ---------- Create a Razorpay order ----------

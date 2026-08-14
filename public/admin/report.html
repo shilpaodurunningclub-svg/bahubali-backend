@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bahubali Registration — Report</title>
+<style>
+  :root {
+    --red: #a3271f;
+    --ink: #1c1c1c;
+    --muted: #6b6b6b;
+    --border: #d9d9d9;
+    --card: #f6f5f4;
+    --page: #e9e7e5;
+    --green: #1a7a3a;
+    --amber: #a06a00;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background: var(--page);
+    color: var(--ink);
+  }
+  .topbar { height: 6px; background: var(--red); }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 32px 20px 80px; }
+  h1 { color: var(--red); letter-spacing: 1px; font-size: 24px; margin: 0 0 20px; }
+
+  /* Login gate */
+  #loginGate {
+    max-width: 420px;
+    margin: 80px auto;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px;
+  }
+  #loginGate h2 { margin-top: 0; font-size: 18px; }
+  #loginGate input {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    font-size: 15px;
+    margin-bottom: 12px;
+  }
+  #loginGate button {
+    width: 100%;
+    padding: 12px;
+    background: var(--red);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 15px;
+  }
+  #loginError { color: var(--red); font-size: 13px; margin-top: 8px; min-height: 16px; }
+
+  /* Summary cards */
+  .summary-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .summary-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+  }
+  .summary-card .num { font-size: 26px; font-weight: 800; }
+  .summary-card .label { font-size: 13px; color: var(--muted); margin-top: 4px; }
+  .summary-card.total .num { color: var(--ink); }
+  .summary-card.success .num { color: var(--green); }
+  .summary-card.pending .num { color: var(--amber); }
+  .summary-card.failed .num { color: var(--red); }
+
+  /* Filter tabs */
+  .filter-row { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .filter-btn {
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: #fff;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .filter-btn.active { background: var(--red); color: #fff; border-color: var(--red); }
+
+  .search-row { margin-bottom: 16px; }
+  .search-row input {
+    width: 100%;
+    max-width: 360px;
+    padding: 10px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    font-size: 14px;
+  }
+
+  table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; }
+  thead th {
+    text-align: left;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--muted);
+    padding: 12px 14px;
+    background: #f0eeec;
+    border-bottom: 1px solid var(--border);
+  }
+  tbody td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+    vertical-align: top;
+  }
+  tbody tr:hover { background: #fafafa; }
+
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .badge.paid { background: #e3f4e8; color: var(--green); }
+  .badge.pending_payment { background: #fdf1d9; color: var(--amber); }
+  .badge.payment_verification_failed { background: #fbe4e2; color: var(--red); }
+
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
+  .refresh-btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: #fff;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    float: right;
+  }
+  .top-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+</style>
+</head>
+<body>
+
+<div class="topbar"></div>
+<div class="wrap">
+
+  <div id="loginGate">
+    <h2>Admin Access</h2>
+    <p style="font-size:13px; color:var(--muted);">Enter the admin key to view the registration report.</p>
+    <input type="password" id="adminKeyInput" placeholder="Admin key" onkeydown="if(event.key==='Enter') login()">
+    <button onclick="login()">View Report</button>
+    <div id="loginError"></div>
+  </div>
+
+  <div id="reportView" style="display:none;">
+    <div class="top-row">
+      <h1>Bahubali Registration — Report</h1>
+      <button class="refresh-btn" onclick="loadData()">↻ Refresh</button>
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-card total"><div class="num" id="sumTotal">0</div><div class="label">Total registrations</div></div>
+      <div class="summary-card success"><div class="num" id="sumPaid">0</div><div class="label">Payment successful</div></div>
+      <div class="summary-card pending"><div class="num" id="sumPending">0</div><div class="label">Filled, payment pending</div></div>
+      <div class="summary-card failed"><div class="num" id="sumFailed">0</div><div class="label">Payment failed</div></div>
+    </div>
+
+    <div class="filter-row">
+      <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">All</button>
+      <button class="filter-btn" data-filter="paid" onclick="setFilter('paid')">Success</button>
+      <button class="filter-btn" data-filter="pending_payment" onclick="setFilter('pending_payment')">Pending / Not completed</button>
+      <button class="filter-btn" data-filter="payment_verification_failed" onclick="setFilter('payment_verification_failed')">Failed</button>
+    </div>
+
+    <div class="search-row">
+      <input type="text" id="searchBox" placeholder="Search by name, email, phone, or registration ID..." oninput="renderTable()">
+    </div>
+
+    <div id="tableWrap"></div>
+  </div>
+</div>
+
+<script>
+  const API_BASE = ''; // served from the same backend
+  let adminKey = '';
+  let allRecords = [];
+  let currentFilter = 'all';
+
+  function login() {
+    adminKey = document.getElementById('adminKeyInput').value.trim();
+    if (!adminKey) return;
+    loadData();
+  }
+
+  function statusLabel(status) {
+    if (status === 'paid') return 'Success';
+    if (status === 'pending_payment') return 'Pending / not completed';
+    if (status === 'payment_verification_failed') return 'Failed';
+    return status || 'Unknown';
+  }
+
+  function runnerName(rec) {
+    if (rec.entryType === 'single' && rec.runner) {
+      return (rec.runner.firstName || '') + ' ' + (rec.runner.lastName || '');
+    }
+    if (rec.entryType === 'multiple' && rec.runners && rec.runners.length) {
+      const first = rec.runners[0];
+      const extra = rec.runners.length > 1 ? ` + ${rec.runners.length - 1} more` : '';
+      return `${first.firstName || ''} ${first.lastName || ''}${extra}`.trim();
+    }
+    return '—';
+  }
+
+  function runnerContact(rec) {
+    if (rec.entryType === 'single' && rec.runner) {
+      return [rec.runner.email, rec.runner.contact].filter(Boolean).join(' · ');
+    }
+    if (rec.entryType === 'multiple' && rec.runners && rec.runners.length) {
+      return [rec.runners[0].email, rec.runners[0].contact].filter(Boolean).join(' · ');
+    }
+    return '—';
+  }
+
+  function raceDistanceLabel(rec) {
+    if (rec.entryType === 'single' && rec.runner) return rec.runner.raceDistanceKm ? rec.runner.raceDistanceKm + ' km' : '—';
+    if (rec.entryType === 'multiple' && rec.runners) {
+      const kms = rec.runners.map(r => r.raceDistanceKm).filter(Boolean);
+      return kms.length ? kms.join(', ') + ' km' : '—';
+    }
+    return '—';
+  }
+
+  async function loadData() {
+    const errEl = document.getElementById('loginError');
+    errEl.textContent = '';
+    try {
+      const res = await fetch(`${API_BASE}/api/registrations`, { headers: { 'x-admin-key': adminKey } });
+      if (res.status === 403) {
+        errEl.textContent = 'Incorrect admin key.';
+        return;
+      }
+      if (!res.ok) {
+        errEl.textContent = 'Could not load data (status ' + res.status + ').';
+        return;
+      }
+      allRecords = await res.json();
+      document.getElementById('loginGate').style.display = 'none';
+      document.getElementById('reportView').style.display = '';
+      renderSummary();
+      renderTable();
+    } catch (e) {
+      errEl.textContent = 'Could not reach the server.';
+    }
+  }
+
+  function renderSummary() {
+    const total = allRecords.length;
+    const paid = allRecords.filter(r => r.status === 'paid').length;
+    const pending = allRecords.filter(r => r.status === 'pending_payment').length;
+    const failed = allRecords.filter(r => r.status === 'payment_verification_failed').length;
+    document.getElementById('sumTotal').textContent = total;
+    document.getElementById('sumPaid').textContent = paid;
+    document.getElementById('sumPending').textContent = pending;
+    document.getElementById('sumFailed').textContent = failed;
+  }
+
+  function setFilter(f) {
+    currentFilter = f;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b.dataset.filter === f));
+    renderTable();
+  }
+
+  function renderTable() {
+    const search = (document.getElementById('searchBox').value || '').toLowerCase();
+    let rows = allRecords;
+    if (currentFilter !== 'all') rows = rows.filter(r => r.status === currentFilter);
+    if (search) {
+      rows = rows.filter(r => {
+        const hay = [runnerName(r), runnerContact(r), r.id].join(' ').toLowerCase();
+        return hay.includes(search);
+      });
+    }
+    rows = rows.slice().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    const wrap = document.getElementById('tableWrap');
+    if (!rows.length) {
+      wrap.innerHTML = '<div class="empty-state">No registrations match this filter.</div>';
+      return;
+    }
+
+    let html = `<table><thead><tr>
+      <th>Status</th><th>Name</th><th>Contact</th><th>Type</th><th>Distance</th><th>Amount</th><th>Registered</th><th>Reg. ID</th>
+    </tr></thead><tbody>`;
+
+    rows.forEach(r => {
+      const amount = typeof r.amount === 'number' ? '₹' + r.amount.toLocaleString('en-IN') : '—';
+      const when = r.createdAt ? new Date(r.createdAt).toLocaleString('en-IN') : '—';
+      html += `<tr>
+        <td><span class="badge ${r.status}">${statusLabel(r.status)}</span></td>
+        <td>${runnerName(r)}</td>
+        <td>${runnerContact(r)}</td>
+        <td>${r.entryType === 'multiple' ? 'Group (' + (r.numRunners || (r.runners||[]).length) + ')' : 'Single'}</td>
+        <td>${raceDistanceLabel(r)}</td>
+        <td>${amount}</td>
+        <td>${when}</td>
+        <td style="font-family:monospace; font-size:12px;">${r.id}</td>
+      </tr>`;
+    });
+
+    html += '</tbody></table>';
+    wrap.innerHTML = html;
+  }
+</script>
+
+</body>
+</html>

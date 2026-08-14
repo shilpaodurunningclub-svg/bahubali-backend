@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deadly Dozen — Bahubali Registration</title>
+<style>
+  :root {
+    --red: #a3271f;
+    --red-dark: #7f1e18;
+    --ink: #1c1c1c;
+    --muted: #6b6b6b;
+    --border: #d9d9d9;
+    --card: #f6f5f4;
+    --page: #e9e7e5;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background: var(--page);
+    color: var(--ink);
+  }
+
+  .topbar {
+    height: 6px;
+    background: var(--red);
+  }
+
+  .wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 40px 20px 100px;
+  }
+
+  h1.brand {
+    color: var(--red);
+    letter-spacing: 2px;
+    font-size: 28px;
+    margin: 0 0 24px;
+  }
+
+  form {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 28px;
+  }
+
+  fieldset {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 20px;
+    margin: 0 0 24px;
+  }
+
+  legend {
+    padding: 0 6px;
+    font-size: 15px;
+    color: var(--ink);
+  }
+
+  .toggle-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .toggle-option {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 18px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    background: #fff;
+    color: var(--ink);
+  }
+
+  .toggle-option.active {
+    background: var(--red);
+    border-color: var(--red);
+    color: #fff;
+  }
+
+  .toggle-option input { display: none; }
+
+  .radio-dot {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid currentColor;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+  }
+
+  .toggle-option.active .radio-dot::after {
+    content: "";
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #fff;
+  }
+
+  .note {
+    background: #e0dede;
+    border-radius: 6px;
+    padding: 14px 16px;
+    font-style: italic;
+    font-size: 14px;
+    color: #333;
+    line-height: 1.5;
+  }
+
+  .field {
+    margin-bottom: 18px;
+  }
+
+  label.field-label {
+    display: block;
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="date"],
+  input[type="file"],
+  select,
+  textarea {
+    width: 100%;
+    padding: 14px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: #fff;
+    font-size: 15px;
+    color: var(--ink);
+    font-family: inherit;
+  }
+
+  textarea { resize: vertical; min-height: 80px; }
+
+  .hint {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .phone-field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: #fff;
+    padding: 0 14px;
+  }
+  .phone-field span.flag { font-size: 18px; }
+  .phone-field input {
+    border: none;
+    padding: 14px 0;
+    flex: 1;
+  }
+  .phone-field input:focus { outline: none; }
+
+  .radio-group, .yesno {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .radio-line {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+  }
+
+  input[type="radio"], input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--red);
+  }
+
+  .checkbox-line {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: #fff;
+  }
+
+  .addon-box {
+    background: #fdf6f5;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px;
+  }
+
+  .addon-line {
+    margin-bottom: 10px;
+    font-size: 14px;
+  }
+  .addon-line:last-child { margin-bottom: 0; }
+
+  .waiver-link {
+    color: var(--red);
+    text-decoration: underline;
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-size: inherit;
+    padding: 0;
+    font-family: inherit;
+  }
+
+  .upload-box {
+    border: 1px dashed var(--border);
+    border-radius: 6px;
+    padding: 18px;
+    background: #fff;
+    text-align: center;
+  }
+
+  .upload-box .filename {
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 30px;
+    padding-top: 24px;
+    border-top: 2px dotted var(--border);
+  }
+
+  button {
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 16px 28px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: none;
+  }
+
+  .btn-cancel {
+    background: #fff;
+    border: 1px solid var(--border);
+    color: var(--ink);
+  }
+
+  .btn-next {
+    background: var(--red);
+    color: #fff;
+  }
+  .btn-next:hover { background: var(--red-dark); }
+
+  .waiver-window {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 24px;
+    max-height: 500px;
+    overflow-y: auto;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #333;
+  }
+  .waiver-window h3 { font-size: 15px; margin: 18px 0 6px; color: var(--ink); }
+  .waiver-window h3:first-child { margin-top: 0; }
+
+  .price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 14px;
+    font-size: 15px;
+  }
+
+  .price-row span:last-child {
+    font-weight: 700;
+  }
+
+  .price-row.total-row {
+    background: var(--red);
+    color: #fff;
+    border-color: var(--red);
+    font-size: 17px;
+    margin-bottom: 0;
+  }
+
+  .gst-fixed {
+    padding: 14px 16px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 14px;
+    color: var(--ink);
+  }
+
+  .pay-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 28px;
+  }
+
+  .pay-header {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+    padding-bottom: 14px;
+    margin-bottom: 16px;
+    border-bottom: 2px dotted var(--border);
+  }
+
+  .pay-methods {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .pay-method {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: #fff;
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .pay-method.active {
+    background: var(--red);
+    border-color: var(--red);
+    color: #fff;
+  }
+
+  .pay-icon { font-size: 18px; }
+
+  .pay-fee {
+    margin-left: auto;
+    font-size: 13px;
+    font-weight: 500;
+    opacity: 0.85;
+  }
+
+  .pay-note {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 16px;
+    line-height: 1.5;
+  }
+
+  .runner-block {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+
+  .runner-block summary {
+    background: var(--red);
+    color: #fff;
+    padding: 14px 18px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    list-style: none;
+  }
+  .runner-block summary::-webkit-details-marker { display: none; }
+  .runner-block summary::before {
+    content: "▸ ";
+  }
+  .runner-block[open] summary::before {
+    content: "▾ ";
+  }
+
+  .runner-body {
+    padding: 18px;
+  }
+
+  /* Modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: #fff;
+    max-width: 640px;
+    width: 100%;
+    max-height: 80vh;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .modal-header {
+    background: var(--red);
+    color: #fff;
+    padding: 18px 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .modal-header h2 { margin: 0; font-size: 18px; letter-spacing: 1px; }
+  .modal-close {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+  }
+
+  .modal-body {
+    padding: 22px;
+    overflow-y: auto;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #333;
+  }
+  .modal-body h3 { font-size: 15px; margin: 18px 0 6px; color: var(--ink); }
+  .modal-body h3:first-child { margin-top: 0; }
+
+  .modal-footer {
+    padding: 16px 22px;
+    border-top: 1px solid var(--border);
+    text-align: right;
+  }
+
+  .required-note {
+    font-size: 13px;
+    color: var(--muted);
+    margin: -8px 0 20px;
+  }
+
+  @media (max-width: 600px) {
+    .toggle-row { flex-direction: column; }
+    .actions { flex-direction: column-reverse; gap: 12px; }
+    .actions button { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar"></div>
+<div class="wrap">
+  <h1 class="brand">BAHUBALI REGISTRATION</h1>
+  <p class="required-note">This is a demo registration form. No data is submitted anywhere. Fields marked * are required.</p>
+
+  <form id="regForm" onsubmit="return handleSubmit(event)">
+
+    <!-- Entry for -->
+    <fieldset>
+      <legend>This entry is for</legend>
+      <div class="toggle-row">
+        <label class="toggle-option active" id="opt-single">
+          <input type="radio" name="entryFor" value="single" checked onclick="setEntry('single')">
+          <span class="radio-dot"></span> SINGLE ENTRY
+        </label>
+        <label class="toggle-option" id="opt-multiple">
+          <input type="radio" name="entryFor" value="multiple" onclick="setEntry('multiple')">
+          <span class="radio-dot"></span> MULTIPLE ENTRY
+        </label>
+      </div>
+      <div class="note">
+        Choose 'Single Entry' to register yourself only using the fields below. Choose 'Multiple Entry' to register a group — enter the number of runners and fill in each runner's details individually.
+      </div>
+    </fieldset>
+
+    <!-- Multiple entry: number of runners -->
+    <fieldset id="multiEntrySections" style="display:none;">
+      <legend>Group details</legend>
+      <div class="field">
+        <label class="field-label" for="numRunners">Enter number of runners *</label>
+        <input type="number" id="numRunners" min="1" max="50" placeholder="e.g. 4" oninput="generateRunnerFields()">
+        <div class="hint">Enter a number between 1 and 50. A details form will appear below for each runner.</div>
+      </div>
+      <div id="runnersContainer"></div>
+    </fieldset>
+
+    <!-- Personal details (single entry) -->
+    <div id="singleEntrySections">
+    <fieldset>
+      <legend>Personal details</legend>
+
+      <div class="field">
+        <input type="text" id="s_firstName" placeholder="First name *" required>
+      </div>
+      <div class="field">
+        <input type="text" id="s_lastName" placeholder="Last name *" required>
+      </div>
+      <div class="field">
+        <input type="email" id="s_email" placeholder="Email address *" required>
+      </div>
+      <div class="field">
+        <input type="email" id="s_confirmEmail" placeholder="Confirm email address *" required>
+      </div>
+
+      <div class="field">
+        <select id="gender" required>
+          <option value="" disabled selected>Gender *</option>
+          <option>Male</option>
+          <option>Female</option>
+          <option>Others</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="dob">Date of birth *</label>
+        <input type="date" id="dob" required>
+      </div>
+
+      <div class="field">
+        <div class="phone-field">
+          <span class="flag">🇮🇳</span>
+          <input type="tel" id="s_contact" placeholder="Contact number *" required>
+        </div>
+        <div class="hint">e.g. 98765 43210</div>
+      </div>
+    </fieldset>
+
+    <!-- Address -->
+    <fieldset>
+      <legend>Address</legend>
+
+      <div class="field">
+        <input type="text" id="s_addr1" placeholder="Address line 1 *" required>
+      </div>
+      <div class="field">
+        <input type="text" id="s_addr2" placeholder="Address line 2">
+      </div>
+      <div class="field">
+        <input type="text" id="s_city" placeholder="City *" required>
+      </div>
+      <div class="field">
+        <select id="s_state" required>
+          <option value="" disabled selected>State *</option>
+          <option>Andhra Pradesh</option>
+          <option>Delhi</option>
+          <option>Gujarat</option>
+          <option>Karnataka</option>
+          <option>Kerala</option>
+          <option>Maharashtra</option>
+          <option>Tamil Nadu</option>
+          <option>Telangana</option>
+          <option>Uttar Pradesh</option>
+          <option>West Bengal</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="field">
+        <select id="s_country" required>
+          <option value="" disabled selected>Country *</option>
+          <option>India</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="field">
+        <input type="text" id="s_pincode" placeholder="Pincode *" required>
+      </div>
+      <div class="field">
+        <select id="s_nationality" required>
+          <option value="" disabled selected>Nationality *</option>
+          <option>Indian</option>
+          <option>Other</option>
+        </select>
+      </div>
+    </fieldset>
+
+    <!-- Emergency contact -->
+    <fieldset>
+      <legend>Emergency contact</legend>
+      <div class="field">
+        <input type="text" id="s_emName" placeholder="Emergency contact name *" required>
+      </div>
+      <div class="field">
+        <div class="phone-field">
+          <span class="flag">🇮🇳</span>
+          <input type="tel" id="s_emNumber" placeholder="Emergency contact number *" required>
+        </div>
+        <div class="hint">e.g. 98765 43210</div>
+      </div>
+    </fieldset>
+
+    <!-- Social / affiliation -->
+    <fieldset>
+      <legend>Social &amp; affiliation</legend>
+      <div class="field">
+        <input type="text" id="s_insta" placeholder="Your Instagram handle">
+      </div>
+      <div class="field">
+        <label class="field-label">Name of your Running Club <span style="font-weight:400; color:var(--muted);">(optional)</span></label>
+        <input type="text" id="s_club">
+      </div>
+      <div class="field">
+        <input type="text" id="s_clubInsta" placeholder="Your Running Club Instagram handle">
+      </div>
+    </fieldset>
+
+    <!-- Qualification time -->
+    <fieldset>
+      <legend>Qualification time</legend>
+
+      <div class="field">
+        <label class="field-label">Upload Timing / Finisher certificate *</label>
+        <div class="upload-box">
+          <input type="file" id="prevCert" accept=".pdf,.jpg,.jpeg,.png" required onchange="showFileName('prevCert','prevCertName')">
+          <div class="filename" id="prevCertName">No file selected</div>
+        </div>
+        <div class="hint">(PDF, JPG or PNG)</div>
+      </div>
+    </fieldset>
+
+    <!-- Health & comms -->
+    <fieldset>
+      <legend>Do you have any medical conditions we need to be aware of? *</legend>
+      <div class="radio-group">
+        <label class="radio-line"><input type="radio" name="medical" required onclick="toggleMedicalDetail('medicalDetail', true)"> Yes</label>
+        <label class="radio-line"><input type="radio" name="medical" required onclick="toggleMedicalDetail('medicalDetail', false)"> No</label>
+      </div>
+      <div class="field" id="medicalDetail" style="display:none; margin-top:14px;">
+        <label class="field-label">Please provide details</label>
+        <textarea id="s_medicalDetailText" placeholder="Describe your medical condition(s)"></textarea>
+      </div>
+    </fieldset>
+    </div>
+    <!-- end singleEntrySections -->
+
+    <!-- Waiver -->
+    <fieldset>
+      <legend>Waiver form</legend>
+      <div class="waiver-window">
+        <h3>Assumption of Risk</h3>
+        <p>This is placeholder waiver text for demonstration purposes only. Participation in the event involves physical exertion over obstacles, uneven terrain, water, and other hazards. Participants acknowledge these risks and agree to take part at their own risk.</p>
+
+        <h3>Medical Fitness</h3>
+        <p>Participants confirm they are medically fit to take part and will disclose any relevant medical conditions to event staff prior to the event.</p>
+
+        <h3>Release of Liability</h3>
+        <p>Participants release the organiser, its staff, volunteers, sponsors, and landowners from any claims, damages, or injuries arising from participation, except where caused by proven negligence.</p>
+
+        <h3>Media Consent</h3>
+        <p>By taking part, participants consent to being photographed or filmed during the event, and to the use of this footage for promotional purposes.</p>
+
+        <h3>Emergency Treatment</h3>
+        <p>Participants authorise event medical staff to provide first aid or arrange emergency medical treatment if required during the event.</p>
+
+        <h3>Data Use</h3>
+        <p>Personal information collected on this form will be used for event administration and, where opted in, future communications from the organiser.</p>
+
+        <p style="margin-top:20px; font-style:italic; color:#777;">(This is dummy sample text to demonstrate a large scrollable waiver window. Replace with the real waiver copy.)</p>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>I agree to the terms and conditions outlined in the waiver *</legend>
+      <div class="checkbox-line">
+        <input type="checkbox" id="waiverCheck" required>
+        <label for="waiverCheck">Yes</label>
+      </div>
+    </fieldset>
+
+    <!-- Race selection & fees -->
+    <fieldset>
+      <legend>Race selection &amp; fees</legend>
+
+      <div id="singleRaceSelect">
+        <div class="field">
+          <label class="field-label" for="raceKm">Select race distance *</label>
+          <select id="raceKm" required onchange="updatePricing()">
+            <option value="" disabled selected>Choose distance</option>
+            <option value="100">100 km — ₹6,999</option>
+            <option value="60">60 km — ₹4,999</option>
+            <option value="160">160 km — ₹9,999</option>
+          </select>
+        </div>
+        <div class="field addon-box" id="addonsSingle" style="display:none;">
+          <label class="field-label">Optional add-ons (60 km runners)</label>
+          <label class="checkbox-line addon-line">
+            <input type="checkbox" id="addon_pickup" onchange="updatePricing()"> Pickup from Vidhana Soudha on 3rd evening — ₹300
+          </label>
+          <label class="checkbox-line addon-line">
+            <input type="checkbox" id="addon_dinner" onchange="updatePricing()"> Dinner — ₹300
+          </label>
+          <label class="checkbox-line addon-line">
+            <input type="checkbox" id="addon_roomstay" onchange="updatePricing()"> Room Stay (Twin-Sharing) — ₹1,200
+          </label>
+          <label class="checkbox-line addon-line">
+            <input type="checkbox" id="addon_drop" onchange="updatePricing()"> Drop to Vidhana Soudha on 4th evening — ₹300
+          </label>
+        </div>
+      </div>
+
+      <div id="multiRaceSelectors" style="display:none;">
+        <div id="multiRaceSelectList"></div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="couponCode">Discount coupon <span style="font-weight:400; color:var(--muted);">(optional)</span></label>
+        <input type="text" id="couponCode" placeholder="Enter coupon code" oninput="updatePricing()">
+        <div class="hint" id="couponMsg"></div>
+      </div>
+
+      <div class="price-row">
+        <span>Base amount</span>
+        <span id="baseAmount">₹0</span>
+      </div>
+
+      <div class="price-row" id="discountRow" style="display:none;">
+        <span>Discount (<span id="discountPct">0</span>%)</span>
+        <span id="discountAmount">− ₹0</span>
+      </div>
+
+      <div class="field">
+        <label class="field-label">GST</label>
+        <div class="gst-fixed">
+          GST is fixed at <strong>18%</strong> for all entries
+        </div>
+      </div>
+
+      <div class="price-row">
+        <span>GST amount (<span id="gstPct">0</span>%)</span>
+        <span id="gstAmount">₹0</span>
+      </div>
+
+      <div class="price-row" id="addonsRow" style="display:none;">
+        <span>Total add-ons payable</span>
+        <span id="addonsAmount">₹0</span>
+      </div>
+
+      <div class="price-row total-row">
+        <span>Grand total</span>
+        <span id="totalAmount">₹0</span>
+      </div>
+
+      <input type="hidden" id="gstRate" value="18">
+    </fieldset>
+
+    <div class="actions">
+      <button type="button" class="btn-cancel" onclick="cancelForm()">CANCEL</button>
+      <button type="submit" class="btn-next">NEXT STEP</button>
+    </div>
+  </form>
+</div>
+
+<!-- Payment Page -->
+<div class="wrap" id="paymentPage" style="display:none;">
+  <h1 class="brand">PAYMENT</h1>
+
+  <div class="pay-card">
+    <div class="pay-header">
+      <span>Order Summary</span>
+    </div>
+
+    <div class="price-row">
+      <span id="payKmLabel">Race distance</span>
+      <span id="payBase">₹0</span>
+    </div>
+    <div class="price-row">
+      <span>GST (<span id="payGstPct">18</span>%)</span>
+      <span id="payGst">₹0</span>
+    </div>
+    <div class="price-row" id="payAddonsRow" style="display:none;">
+      <span>Add-ons (dinner / hotel / transport)</span>
+      <span id="payAddons">₹0</span>
+    </div>
+    <div class="price-row">
+      <span>Subtotal</span>
+      <span id="paySubtotal">₹0</span>
+    </div>
+    <div class="price-row">
+      <span>Razorpay convenience fee (<span id="rzpPct">2</span>%)</span>
+      <span id="rzpFee">₹0</span>
+    </div>
+    <div class="price-row total-row">
+      <span>Amount to pay</span>
+      <span id="payGrandTotal">₹0</span>
+    </div>
+
+    <div class="field" style="margin-top:24px;">
+      <label class="field-label">Select payment method</label>
+      <div class="pay-methods">
+        <label class="pay-method active" id="pm-credit" onclick="setPayMethod('credit')">
+          <span class="pay-icon">💳</span> Credit Card
+          <span class="pay-fee">2% fee</span>
+        </label>
+        <label class="pay-method" id="pm-debit" onclick="setPayMethod('debit')">
+          <span class="pay-icon">💳</span> Debit Card
+          <span class="pay-fee">2% fee</span>
+        </label>
+        <label class="pay-method" id="pm-upi" onclick="setPayMethod('upi')">
+          <span class="pay-icon">📱</span> UPI
+          <span class="pay-fee">0% fee</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button type="button" class="btn-cancel" onclick="backToForm()">BACK</button>
+      <button type="button" class="btn-next" onclick="payNow()">PAY NOW</button>
+    </div>
+  </div>
+
+  <p class="pay-note">Razorpay is used here for demonstration only — this is a dummy checkout screen and no real payment is processed. Convenience fee percentages are illustrative.</p>
+</div>
+
+<script>
+  const API_BASE = 'https://bahubali-registration-backend.onrender.com'; // absolute URL: this copy runs inside Wix, not on Render
+
+  const RACE_PRICES = { "100": 6999, "60": 4999, "160": 9999 };
+  let currentGst = 18;
+
+  function formatINR(n) {
+    return '₹' + n.toLocaleString('en-IN');
+  }
+
+  const COUPONS = { 'BAHUBALI10': 10, 'BAHUBALI20': 20 };
+
+  const ADDON_PRICES = { pickup: 300, dinner: 300, roomstay: 1200, drop: 300 };
+
+  function addonTotal(prefix) {
+    let sum = 0;
+    if (document.getElementById(prefix + '_pickup') && document.getElementById(prefix + '_pickup').checked) sum += ADDON_PRICES.pickup;
+    if (document.getElementById(prefix + '_dinner') && document.getElementById(prefix + '_dinner').checked) sum += ADDON_PRICES.dinner;
+    if (document.getElementById(prefix + '_roomstay') && document.getElementById(prefix + '_roomstay').checked) sum += ADDON_PRICES.roomstay;
+    if (document.getElementById(prefix + '_drop') && document.getElementById(prefix + '_drop').checked) sum += ADDON_PRICES.drop;
+    return sum;
+  }
+
+  function updatePricing() {
+    const isMulti = document.getElementById('opt-multiple').classList.contains('active');
+    let base = 0;
+    let addonsTotal = 0;
+
+    if (isMulti) {
+      const n = Math.max(0, Math.min(parseInt(document.getElementById('numRunners').value, 10) || 0, 50));
+      for (let i = 1; i <= n; i++) {
+        const sel = document.getElementById(`feeRaceKm_${i}`);
+        const val = sel ? sel.value : '';
+        base += RACE_PRICES[val] || 0;
+
+        const addonsBox = document.getElementById(`addons_${i}`);
+        if (addonsBox) {
+          const show = val === '60';
+          addonsBox.style.display = show ? '' : 'none';
+          if (show) {
+            addonsTotal += addonTotal(`addon_${i}`);
+          } else {
+            ['pickup', 'dinner', 'roomstay', 'drop'].forEach(function (k) {
+              const el = document.getElementById(`addon_${i}_${k}`);
+              if (el) el.checked = false;
+            });
+          }
+        }
+      }
+    } else {
+      const km = document.getElementById('raceKm').value;
+      base = RACE_PRICES[km] || 0;
+
+      const addonsSingle = document.getElementById('addonsSingle');
+      const show = km === '60';
+      addonsSingle.style.display = show ? '' : 'none';
+      if (show) {
+        addonsTotal += addonTotal('addon');
+      } else {
+        ['pickup', 'dinner', 'roomstay', 'drop'].forEach(function (k) {
+          const el = document.getElementById('addon_' + k);
+          if (el) el.checked = false;
+        });
+      }
+    }
+
+    const codeRaw = (document.getElementById('couponCode').value || '').trim();
+    const code = codeRaw.toUpperCase();
+    const discountPct = COUPONS[code] || 0;
+    const discountAmt = Math.round(base * discountPct / 100);
+    const discountedBase = base - discountAmt;
+
+    const discountRow = document.getElementById('discountRow');
+    const couponMsg = document.getElementById('couponMsg');
+    if (discountPct > 0) {
+      discountRow.style.display = '';
+      document.getElementById('discountPct').textContent = discountPct;
+      document.getElementById('discountAmount').textContent = '− ' + formatINR(discountAmt);
+      couponMsg.textContent = `Coupon applied: ${discountPct}% off`;
+      couponMsg.style.color = '#1a7a3a';
+    } else {
+      discountRow.style.display = 'none';
+      couponMsg.textContent = codeRaw ? 'Invalid coupon code' : '';
+      couponMsg.style.color = codeRaw ? '#a3271f' : 'var(--muted)';
+    }
+
+    const gstAmt = Math.round(discountedBase * currentGst / 100);
+
+    const addonsRow = document.getElementById('addonsRow');
+    if (addonsTotal > 0) {
+      addonsRow.style.display = '';
+      document.getElementById('addonsAmount').textContent = formatINR(addonsTotal);
+    } else {
+      addonsRow.style.display = 'none';
+    }
+
+    const total = discountedBase + gstAmt + addonsTotal;
+
+    document.getElementById('baseAmount').textContent = formatINR(base);
+    document.getElementById('gstPct').textContent = currentGst;
+    document.getElementById('gstAmount').textContent = formatINR(gstAmt);
+    document.getElementById('totalAmount').textContent = formatINR(total);
+  }
+
+  function setEntry(value) {
+    const isSingle = value === 'single';
+    document.getElementById('opt-single').classList.toggle('active', isSingle);
+    document.getElementById('opt-multiple').classList.toggle('active', !isSingle);
+    toggleSection('singleEntrySections', isSingle);
+    toggleSection('multiEntrySections', !isSingle);
+
+    document.getElementById('singleRaceSelect').style.display = isSingle ? '' : 'none';
+    document.getElementById('multiRaceSelectors').style.display = isSingle ? 'none' : '';
+    document.getElementById('raceKm').disabled = !isSingle;
+    document.querySelectorAll('#multiRaceSelectList select').forEach(function (s) {
+      s.disabled = isSingle;
+    });
+
+    updatePricing();
+  }
+
+  function toggleSection(id, show) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.style.display = show ? '' : 'none';
+    el.querySelectorAll('input, select, textarea').forEach(function (f) {
+      f.disabled = !show;
+    });
+  }
+
+  function buildRunnerBlock(i) {
+    return `
+    <details class="runner-block" ${i === 1 ? 'open' : ''}>
+      <summary>Runner ${i}</summary>
+      <div class="runner-body">
+        <div class="field"><input type="text" id="r${i}_firstName" placeholder="First name *" required></div>
+        <div class="field"><input type="text" id="r${i}_lastName" placeholder="Last name *" required></div>
+        <div class="field"><input type="email" id="r${i}_email" placeholder="Email address *" required></div>
+        <div class="field"><input type="email" id="r${i}_confirmEmail" placeholder="Confirm email address *" required></div>
+        <div class="field">
+          <select id="r${i}_gender" required>
+            <option value="" disabled selected>Gender *</option>
+            <option>Male</option><option>Female</option><option>Others</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="field-label" for="r${i}_dob">Date of birth *</label>
+          <input type="date" id="r${i}_dob" required>
+        </div>
+        <div class="field">
+          <div class="phone-field"><span class="flag">🇮🇳</span><input type="tel" id="r${i}_contact" placeholder="Contact number *" required></div>
+        </div>
+        <div class="field"><input type="text" id="r${i}_addr1" placeholder="Address line 1 *" required></div>
+        <div class="field"><input type="text" id="r${i}_addr2" placeholder="Address line 2"></div>
+        <div class="field"><input type="text" id="r${i}_city" placeholder="City *" required></div>
+        <div class="field">
+          <select id="r${i}_state" required>
+            <option value="" disabled selected>State *</option>
+            <option>Andhra Pradesh</option>
+            <option>Delhi</option>
+            <option>Gujarat</option>
+            <option>Karnataka</option>
+            <option>Kerala</option>
+            <option>Maharashtra</option>
+            <option>Tamil Nadu</option>
+            <option>Telangana</option>
+            <option>Uttar Pradesh</option>
+            <option>West Bengal</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <select id="r${i}_countrySel" required>
+            <option value="" disabled selected>Country *</option>
+            <option>India</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="field"><input type="text" id="r${i}_postcode" placeholder="Pincode *" required></div>
+        <div class="field">
+          <select id="r${i}_nationality" required>
+            <option value="" disabled selected>Nationality *</option><option>Indian</option><option>Other</option>
+          </select>
+        </div>
+        <div class="field"><input type="text" id="r${i}_emName" placeholder="Emergency contact name *" required></div>
+        <div class="field">
+          <div class="phone-field"><span class="flag">🇮🇳</span><input type="tel" id="r${i}_emNumber" placeholder="Emergency contact number *" required></div>
+        </div>
+        <div class="field"><input type="text" id="r${i}_insta" placeholder="Instagram handle"></div>
+        <div class="field">
+          <label class="field-label">Name of your Running Club <span style="font-weight:400; color:var(--muted);">(optional)</span></label>
+          <input type="text" id="r${i}_gym">
+        </div>
+        <div class="field"><input type="text" id="r${i}_gymInsta" placeholder="Running Club Instagram handle"></div>
+        <div class="field">
+          <label class="field-label">Upload Timing / Finisher certificate *</label>
+          <div class="upload-box">
+            <input type="file" id="r${i}_prevCert" accept=".pdf,.jpg,.jpeg,.png" required onchange="showFileName('r${i}_prevCert','r${i}_prevCertName')">
+            <div class="filename" id="r${i}_prevCertName">No file selected</div>
+          </div>
+          <div class="hint">(PDF, JPG or PNG)</div>
+        </div>
+        <div class="field">
+          <label class="field-label">Do you have any medical conditions we need to be aware of? *</label>
+          <div class="radio-group">
+            <label class="radio-line"><input type="radio" name="r${i}_medical" required onclick="toggleMedicalDetail('r${i}_medicalDetail', true)"> Yes</label>
+            <label class="radio-line"><input type="radio" name="r${i}_medical" required onclick="toggleMedicalDetail('r${i}_medicalDetail', false)"> No</label>
+          </div>
+          <div class="field" id="r${i}_medicalDetail" style="display:none; margin-top:14px;">
+            <label class="field-label">Please provide details</label>
+            <textarea id="r${i}_medicalDetailText" placeholder="Describe medical condition(s)"></textarea>
+          </div>
+        </div>
+      </div>
+    </details>`;
+  }
+
+  function buildFeeRaceSelect(i) {
+    return `
+    <div class="field">
+      <label class="field-label" for="feeRaceKm_${i}">Runner ${i} — Select race distance *</label>
+      <select id="feeRaceKm_${i}" required onchange="updatePricing()">
+        <option value="" disabled selected>Choose distance</option>
+        <option value="100">100 km — ₹6,999</option>
+        <option value="60">60 km — ₹4,999</option>
+        <option value="160">160 km — ₹9,999</option>
+      </select>
+    </div>
+    <div class="field addon-box" id="addons_${i}" style="display:none; margin-top:-8px; margin-bottom:20px;">
+      <label class="field-label">Runner ${i} — Optional add-ons (60 km)</label>
+      <label class="checkbox-line addon-line">
+        <input type="checkbox" id="addon_${i}_pickup" onchange="updatePricing()"> Pickup from Vidhana Soudha on 3rd evening — ₹300
+      </label>
+      <label class="checkbox-line addon-line">
+        <input type="checkbox" id="addon_${i}_dinner" onchange="updatePricing()"> Dinner — ₹300
+      </label>
+      <label class="checkbox-line addon-line">
+        <input type="checkbox" id="addon_${i}_roomstay" onchange="updatePricing()"> Room Stay (Twin-Sharing) — ₹1,200
+      </label>
+      <label class="checkbox-line addon-line">
+        <input type="checkbox" id="addon_${i}_drop" onchange="updatePricing()"> Drop to Vidhana Soudha on 4th evening — ₹300
+      </label>
+    </div>`;
+  }
+
+  function generateFeeRaceSelectors(n) {
+    const container = document.getElementById('multiRaceSelectList');
+    container.innerHTML = '';
+    for (let i = 1; i <= n; i++) {
+      container.insertAdjacentHTML('beforeend', buildFeeRaceSelect(i));
+    }
+  }
+
+  function generateRunnerFields() {
+    const raw = parseInt(document.getElementById('numRunners').value, 10);
+    const n = Math.max(0, Math.min(raw || 0, 50));
+    const container = document.getElementById('runnersContainer');
+    container.innerHTML = '';
+    for (let i = 1; i <= n; i++) {
+      container.insertAdjacentHTML('beforeend', buildRunnerBlock(i));
+    }
+    generateFeeRaceSelectors(n);
+    updatePricing();
+  }
+
+  function toggleMedicalDetail(id, show) {
+    const el = document.getElementById(id);
+    if (el) {
+      el.style.display = show ? '' : 'none';
+      const ta = el.querySelector('textarea');
+      if (ta) ta.required = show;
+    }
+  }
+
+  function showFileName(inputId, labelId) {
+    const input = document.getElementById(inputId);
+    const label = document.getElementById(labelId);
+    label.textContent = input.files.length ? input.files[0].name : 'No file selected';
+  }
+
+  function cancelForm() {
+    if (confirm('Discard this registration?')) {
+      document.getElementById('regForm').reset();
+      document.getElementById('runnersContainer').innerHTML = '';
+      document.getElementById('multiRaceSelectList').innerHTML = '';
+      toggleMedicalDetail('medicalDetail', false);
+      document.getElementById('couponMsg').textContent = '';
+      document.getElementById('discountRow').style.display = 'none';
+      setEntry('single');
+      updatePricing();
+      showFileName('prevCert','prevCertName');
+    }
+  }
+
+  const RAZORPAY_FEE_PCT = { credit: 2, debit: 2, upi: 0 };
+  let currentPayMethod = 'credit';
+  let lastBase = 0;
+  let lastGst = 0;
+  let lastAddons = 0;
+  let lastKmLabel = '';
+
+  function setPayMethod(method) {
+    currentPayMethod = method;
+    document.getElementById('pm-credit').classList.toggle('active', method === 'credit');
+    document.getElementById('pm-debit').classList.toggle('active', method === 'debit');
+    document.getElementById('pm-upi').classList.toggle('active', method === 'upi');
+    updatePaymentPage();
+  }
+
+  function updatePaymentPage() {
+    const subtotal = lastBase + lastGst + lastAddons;
+    const feePct = RAZORPAY_FEE_PCT[currentPayMethod];
+    const fee = Math.round(subtotal * feePct / 100);
+    const grandTotal = subtotal + fee;
+
+    document.getElementById('payKmLabel').textContent = lastKmLabel;
+    document.getElementById('payBase').textContent = formatINR(lastBase);
+    document.getElementById('payGst').textContent = formatINR(lastGst);
+
+    const addonsRow = document.getElementById('payAddonsRow');
+    if (lastAddons > 0) {
+      addonsRow.style.display = '';
+      document.getElementById('payAddons').textContent = formatINR(lastAddons);
+    } else {
+      addonsRow.style.display = 'none';
+    }
+
+    document.getElementById('paySubtotal').textContent = formatINR(subtotal);
+    document.getElementById('rzpPct').textContent = feePct;
+    document.getElementById('rzpFee').textContent = formatINR(fee);
+    document.getElementById('payGrandTotal').textContent = formatINR(grandTotal);
+  }
+
+  let currentRegistrationId = null;
+  let cachedKeyId = null;
+
+  function fieldVal(id) {
+    const el = document.getElementById(id);
+    return el ? el.value : '';
+  }
+
+  function radioIsYes(name) {
+    const els = document.querySelectorAll(`input[name="${name}"]`);
+    for (const el of els) {
+      if (el.checked) {
+        return el.parentElement.textContent.trim().toLowerCase().startsWith('yes');
+      }
+    }
+    return null;
+  }
+
+  function collectRunnerAddons(prefix) {
+    return {
+      pickup: !!(document.getElementById(prefix + '_pickup') && document.getElementById(prefix + '_pickup').checked),
+      dinner: !!(document.getElementById(prefix + '_dinner') && document.getElementById(prefix + '_dinner').checked),
+      roomstay: !!(document.getElementById(prefix + '_roomstay') && document.getElementById(prefix + '_roomstay').checked),
+      drop: !!(document.getElementById(prefix + '_drop') && document.getElementById(prefix + '_drop').checked)
+    };
+  }
+
+  function collectFormData(pricing) {
+    const isMulti = document.getElementById('opt-multiple').classList.contains('active');
+    const data = {
+      entryType: isMulti ? 'multiple' : 'single',
+      couponCode: (document.getElementById('couponCode').value || '').trim(),
+      gstRate: currentGst,
+      amount: pricing.total, // Grand total — what actually gets charged
+      pricingBreakdown: pricing
+    };
+
+    if (!isMulti) {
+      data.runner = {
+        firstName: fieldVal('s_firstName'),
+        lastName: fieldVal('s_lastName'),
+        email: fieldVal('s_email'),
+        gender: fieldVal('gender'),
+        dob: fieldVal('dob'),
+        contact: fieldVal('s_contact'),
+        address1: fieldVal('s_addr1'),
+        address2: fieldVal('s_addr2'),
+        city: fieldVal('s_city'),
+        state: fieldVal('s_state'),
+        country: fieldVal('s_country'),
+        pincode: fieldVal('s_pincode'),
+        nationality: fieldVal('s_nationality'),
+        emergencyContactName: fieldVal('s_emName'),
+        emergencyContactNumber: fieldVal('s_emNumber'),
+        instagram: fieldVal('s_insta'),
+        runningClub: fieldVal('s_club'),
+        runningClubInstagram: fieldVal('s_clubInsta'),
+        certificateFileName: (document.getElementById('prevCert').files[0] || {}).name || null,
+        hasMedicalCondition: radioIsYes('medical'),
+        medicalDetails: fieldVal('s_medicalDetailText'),
+        raceDistanceKm: fieldVal('raceKm'),
+        addons: collectRunnerAddons('addon')
+      };
+    } else {
+      const n = Math.max(0, Math.min(parseInt(document.getElementById('numRunners').value, 10) || 0, 50));
+      data.numRunners = n;
+      data.runners = [];
+      for (let i = 1; i <= n; i++) {
+        data.runners.push({
+          firstName: fieldVal(`r${i}_firstName`),
+          lastName: fieldVal(`r${i}_lastName`),
+          email: fieldVal(`r${i}_email`),
+          gender: fieldVal(`r${i}_gender`),
+          dob: fieldVal(`r${i}_dob`),
+          contact: fieldVal(`r${i}_contact`),
+          address1: fieldVal(`r${i}_addr1`),
+          address2: fieldVal(`r${i}_addr2`),
+          city: fieldVal(`r${i}_city`),
+          state: fieldVal(`r${i}_state`),
+          country: fieldVal(`r${i}_countrySel`),
+          pincode: fieldVal(`r${i}_postcode`),
+          nationality: fieldVal(`r${i}_nationality`),
+          emergencyContactName: fieldVal(`r${i}_emName`),
+          emergencyContactNumber: fieldVal(`r${i}_emNumber`),
+          instagram: fieldVal(`r${i}_insta`),
+          runningClub: fieldVal(`r${i}_gym`),
+          runningClubInstagram: fieldVal(`r${i}_gymInsta`),
+          certificateFileName: (function () {
+            const el = document.getElementById(`r${i}_prevCert`);
+            return el && el.files[0] ? el.files[0].name : null;
+          })(),
+          hasMedicalCondition: radioIsYes(`r${i}_medical`),
+          medicalDetails: fieldVal(`r${i}_medicalDetailText`),
+          raceDistanceKm: fieldVal(`feeRaceKm_${i}`),
+          addons: collectRunnerAddons(`addon_${i}`)
+        });
+      }
+    }
+
+    return data;
+  }
+
+  async function loadRazorpayScript() {
+    if (window.Razorpay) return true;
+    return new Promise((resolve) => {
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  }
+
+  function backToForm() {
+    document.getElementById('paymentPage').style.display = 'none';
+    document.getElementById('regForm').style.display = '';
+    window.scrollTo(0, 0);
+  }
+
+  async function payNow() {
+    const btn = event && event.target;
+    const originalText = btn ? btn.textContent : '';
+    if (btn) { btn.disabled = true; btn.textContent = 'PROCESSING…'; }
+
+    try {
+      const subtotal = lastBase + lastGst + lastAddons;
+      const feePct = RAZORPAY_FEE_PCT[currentPayMethod];
+      const fee = Math.round(subtotal * feePct / 100);
+      const grandTotal = subtotal + fee;
+
+      const orderRes = await fetch(`${API_BASE}/api/create-order`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ registrationId: currentRegistrationId, amountInRupees: grandTotal })
+      });
+      const orderData = await orderRes.json();
+
+      if (!orderRes.ok) {
+        alert('Could not start payment: ' + (orderData.error || 'Unknown error') +
+          '\n\nMake sure the backend has RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET set in .env.');
+        return;
+      }
+
+      const loaded = await loadRazorpayScript();
+      if (!loaded) {
+        alert('Could not load Razorpay Checkout. Check your internet connection.');
+        return;
+      }
+
+      const rzp = new Razorpay({
+        key: orderData.keyId,
+        amount: orderData.order.amount,
+        currency: orderData.order.currency,
+        name: 'Deadly Dozen — Bahubali',
+        description: 'Race registration payment',
+        order_id: orderData.order.id,
+        method: {
+          netbanking: false,
+          card: currentPayMethod === 'credit' || currentPayMethod === 'debit',
+          upi: currentPayMethod === 'upi',
+          wallet: false
+        },
+        handler: async function (response) {
+          try {
+            const verifyRes = await fetch(`${API_BASE}/api/verify-payment`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                registrationId: currentRegistrationId,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature
+              })
+            });
+            const verifyData = await verifyRes.json();
+            if (verifyRes.ok && verifyData.ok) {
+              alert('Payment successful! Registration ID: ' + currentRegistrationId);
+            } else {
+              alert('Payment could not be verified. Please contact support with Registration ID: ' + currentRegistrationId);
+            }
+          } catch (err) {
+            console.error(err);
+            alert('Payment succeeded but verification failed to reach the server.');
+          }
+        },
+        modal: {
+          ondismiss: function () {
+            if (btn) { btn.disabled = false; btn.textContent = originalText; }
+          }
+        },
+        theme: { color: '#a3271f' }
+      });
+
+      rzp.on('payment.failed', function (response) {
+        alert('Payment failed: ' + (response.error && response.error.description ? response.error.description : 'Unknown error'));
+      });
+
+      rzp.open();
+    } catch (err) {
+      console.error(err);
+      alert('Something went wrong starting the payment. Please try again.');
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = originalText; }
+    }
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    const form = document.getElementById('regForm');
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return false;
+    }
+
+    const isMulti = document.getElementById('opt-multiple').classList.contains('active');
+    updatePricing();
+
+    const rawBase = parseInt((document.getElementById('baseAmount').textContent || '0').replace(/[^\d]/g, ''), 10) || 0;
+    lastAddons = document.getElementById('addonsRow').style.display === 'none'
+      ? 0
+      : parseInt((document.getElementById('addonsAmount').textContent || '0').replace(/[^\d]/g, ''), 10) || 0;
+    if (isMulti) {
+      const n = Math.max(0, Math.min(parseInt(document.getElementById('numRunners').value, 10) || 0, 50));
+      lastKmLabel = n + ' runner' + (n === 1 ? '' : 's') + ' — combined race fees & add-ons';
+    } else {
+      const kmSelect = document.getElementById('raceKm');
+      lastKmLabel = kmSelect.options[kmSelect.selectedIndex].text.split(' — ')[0];
+    }
+
+    const code = (document.getElementById('couponCode').value || '').trim().toUpperCase();
+    const discountPct = COUPONS[code] || 0;
+    const discountAmt = Math.round(rawBase * discountPct / 100);
+    lastBase = rawBase - discountAmt;
+    if (discountPct > 0) {
+      lastKmLabel += ` (${discountPct}% coupon applied)`;
+    }
+    lastGst = Math.round(lastBase * currentGst / 100);
+
+    const grandTotal = lastBase + lastGst + lastAddons;
+    const formData = collectFormData({
+      rawBase: rawBase,
+      discountPct: discountPct,
+      discountAmount: discountAmt,
+      base: lastBase,
+      gst: lastGst,
+      addons: lastAddons,
+      total: grandTotal
+    });
+
+    const nextBtn = document.querySelector('.btn-next');
+    const originalLabel = nextBtn ? nextBtn.textContent : '';
+    if (nextBtn) { nextBtn.disabled = true; nextBtn.textContent = 'SAVING…'; }
+
+    try {
+      const res = await fetch(`${API_BASE}/api/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        alert('Could not save your registration: ' + (data.error || 'Unknown error'));
+        return false;
+      }
+      currentRegistrationId = data.registrationId;
+    } catch (err) {
+      console.error(err);
+      alert('Could not reach the server to save your registration. Is the backend running?');
+      return false;
+    } finally {
+      if (nextBtn) { nextBtn.disabled = false; nextBtn.textContent = originalLabel; }
+    }
+
+    setPayMethod('credit');
+    form.style.display = 'none';
+    document.getElementById('paymentPage').style.display = '';
+    window.scrollTo(0, 0);
+    return false;
+  }
+
+  setEntry('single');
+</script>
+
+</body>
+</html>
