@@ -132,6 +132,40 @@
   .badge.payment_verification_failed { background: #fbe4e2; color: var(--red); }
 
   .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
+
+  .bulk-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #fdf1d9;
+    border: 1px solid #eccf8f;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .delete-btn {
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--red);
+    background: var(--red);
+    color: #fff;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .row-delete-btn {
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: #fff;
+    color: var(--red);
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .row-delete-btn:hover { background: #fbe4e2; }
   .refresh-btn {
     padding: 8px 16px;
     border-radius: 6px;
@@ -180,6 +214,11 @@
 
     <div class="search-row">
       <input type="text" id="searchBox" placeholder="Search by name, email, phone, or registration ID..." oninput="renderTable()">
+    </div>
+
+    <div class="bulk-bar" id="bulkBar" style="display:none;">
+      <span id="selectedCount">0 selected</span>
+      <button class="delete-btn" onclick="bulkDelete()">Delete selected</button>
     </div>
 
     <div id="tableWrap"></div>
@@ -276,7 +315,29 @@
     renderTable();
   }
 
-  function renderTable() {
+  let selectedIds = new Set();
+
+  function toggleSelect(id, checked) {
+    if (checked) selectedIds.add(id); else selectedIds.delete(id);
+    updateBulkBar();
+  }
+
+  function toggleSelectAll(checked) {
+    const visibleRows = getVisibleRows();
+    visibleRows.forEach(r => {
+      if (checked) selectedIds.add(r.id); else selectedIds.delete(r.id);
+    });
+    renderTable();
+  }
+
+  function updateBulkBar() {
+    const bar = document.getElementById('bulkBar');
+    const count = selectedIds.size;
+    document.getElementById('selectedCount').textContent = count + ' selected';
+    bar.style.display = count > 0 ? 'flex' : 'none';
+  }
+
+  function getVisibleRows() {
     const search = (document.getElementById('searchBox').value || '').toLowerCase();
     let rows = allRecords;
     if (currentFilter !== 'all') rows = rows.filter(r => r.status === currentFilter);
@@ -286,22 +347,72 @@
         return hay.includes(search);
       });
     }
-    rows = rows.slice().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    return rows.slice().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  }
+
+  async function deleteOne(id) {
+    if (!confirm('Delete this registration permanently? This cannot be undone.')) return;
+    try {
+      const res = await fetch(`${API_BASE}/api/registrations/${encodeURIComponent(id)}`, {
+        method: 'DELETE',
+        headers: { 'x-admin-key': adminKey }
+      });
+      if (!res.ok) {
+        alert('Could not delete this record (status ' + res.status + ').');
+        return;
+      }
+      selectedIds.delete(id);
+      await loadData();
+    } catch (e) {
+      alert('Could not reach the server to delete this record.');
+    }
+  }
+
+  async function bulkDelete() {
+    const ids = Array.from(selectedIds);
+    if (!ids.length) return;
+    if (!confirm(`Delete ${ids.length} registration${ids.length === 1 ? '' : 's'} permanently? This cannot be undone.`)) return;
+    try {
+      const res = await fetch(`${API_BASE}/api/registrations/bulk-delete`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-admin-key': adminKey },
+        body: JSON.stringify({ ids })
+      });
+      if (!res.ok) {
+        alert('Could not delete records (status ' + res.status + ').');
+        return;
+      }
+      selectedIds.clear();
+      await loadData();
+    } catch (e) {
+      alert('Could not reach the server to delete these records.');
+    }
+  }
+
+  function renderTable() {
+    const rows = getVisibleRows();
 
     const wrap = document.getElementById('tableWrap');
+    updateBulkBar();
+
     if (!rows.length) {
       wrap.innerHTML = '<div class="empty-state">No registrations match this filter.</div>';
       return;
     }
 
+    const allVisibleSelected = rows.every(r => selectedIds.has(r.id));
+
     let html = `<table><thead><tr>
-      <th>Status</th><th>Name</th><th>Contact</th><th>Type</th><th>Distance</th><th>Amount</th><th>Registered</th><th>Reg. ID</th>
+      <th><input type="checkbox" ${allVisibleSelected ? 'checked' : ''} onchange="toggleSelectAll(this.checked)"></th>
+      <th>Status</th><th>Name</th><th>Contact</th><th>Type</th><th>Distance</th><th>Amount</th><th>Registered</th><th>Reg. ID</th><th></th>
     </tr></thead><tbody>`;
 
     rows.forEach(r => {
       const amount = typeof r.amount === 'number' ? '₹' + r.amount.toLocaleString('en-IN') : '—';
       const when = r.createdAt ? new Date(r.createdAt).toLocaleString('en-IN') : '—';
+      const checked = selectedIds.has(r.id) ? 'checked' : '';
       html += `<tr>
+        <td><input type="checkbox" ${checked} onchange="toggleSelect('${r.id}', this.checked)"></td>
         <td><span class="badge ${r.status}">${statusLabel(r.status)}</span></td>
         <td>${runnerName(r)}</td>
         <td>${runnerContact(r)}</td>
@@ -310,6 +421,7 @@
         <td>${amount}</td>
         <td>${when}</td>
         <td style="font-family:monospace; font-size:12px;">${r.id}</td>
+        <td><button class="row-delete-btn" onclick="deleteOne('${r.id}')">Delete</button></td>
       </tr>`;
     });
 

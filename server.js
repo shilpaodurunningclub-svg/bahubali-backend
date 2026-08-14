@@ -111,6 +111,33 @@ app.get('/api/registrations-summary', requireAdmin, (req, res) => {
   res.json(summary);
 });
 
+// ---------- Delete one registration (admin only) ----------
+app.delete('/api/registrations/:id', requireAdmin, (req, res) => {
+  const list = readRegistrations();
+  const idx = list.findIndex(r => r.id === req.params.id);
+  if (idx === -1) return res.status(404).json({ error: 'Not found' });
+
+  const [removed] = list.splice(idx, 1);
+  writeRegistrations(list);
+  res.json({ ok: true, deleted: removed.id });
+});
+
+// ---------- Bulk delete registrations (admin only) ----------
+app.post('/api/registrations/bulk-delete', requireAdmin, (req, res) => {
+  const { ids } = req.body || {};
+  if (!Array.isArray(ids) || !ids.length) {
+    return res.status(400).json({ error: 'ids must be a non-empty array.' });
+  }
+
+  const list = readRegistrations();
+  const idSet = new Set(ids);
+  const remaining = list.filter(r => !idSet.has(r.id));
+  const deletedCount = list.length - remaining.length;
+
+  writeRegistrations(remaining);
+  res.json({ ok: true, deletedCount });
+});
+
 // ---------- Create a Razorpay order ----------
 // amountInRupees comes from the form's already-computed Grand Total.
 app.post('/api/create-order', async (req, res) => {
