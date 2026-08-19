@@ -43,11 +43,6 @@ if (EMAIL_USER && EMAIL_PASS) {
   console.warn('⚠️  EMAIL_USER / EMAIL_PASS not set in .env — confirmation emails will be skipped (logged only) until configured.');
 }
 
-function generateBibNumber() {
-  const random = crypto.randomBytes(3).toString('hex').toUpperCase(); // 6 hex chars
-  return `BAHU-${random}`;
-}
-
 function formatAddonsList(addons) {
   if (!addons) return [];
   const labels = {
@@ -59,11 +54,10 @@ function formatAddonsList(addons) {
   return Object.keys(labels).filter(k => addons[k]).map(k => labels[k]);
 }
 
-function buildRunnerSummaryText(runner, bibNumber) {
+function buildRunnerSummaryText(runner) {
   const addons = formatAddonsList(runner.addons);
   const fullName = `${(runner.firstName || '')} ${(runner.lastName || '')}`.trim();
   const lines = [
-    `  Bib Number: ${bibNumber}`,
     `  Name: ${fullName}`,
     `  Race Distance: ${runner.raceDistanceKm ? runner.raceDistanceKm + ' km' : 'Not specified'}`
   ];
@@ -86,10 +80,8 @@ async function sendConfirmationEmail(record) {
   }
 
   const runners = record.entryType === 'single' ? [record.runner] : (record.runners || []);
-  const bibNumbers = runners.map(() => generateBibNumber());
-  record.bibNumbers = bibNumbers;
 
-  const runnerBlocks = runners.map((r, idx) => buildRunnerSummaryText(r, bibNumbers[idx])).join('\n\n');
+  const runnerBlocks = runners.map(r => buildRunnerSummaryText(r)).join('\n\n');
   const amountPaid = typeof record.amount === 'number' ? `₹${record.amount.toLocaleString('en-IN')}` : 'N/A';
   const primaryName = runners[0] ? `${runners[0].firstName || ''} ${runners[0].lastName || ''}`.trim() : 'Runner';
 
@@ -324,7 +316,7 @@ app.post('/api/verify-payment', async (req, res) => {
 
   if (record) {
     await sendConfirmationEmail(record);
-    writeRegistrations(registrations); // persist bib numbers added inside sendConfirmationEmail
+    writeRegistrations(registrations);
   }
 
   res.json({ ok: true, status: 'paid' });
