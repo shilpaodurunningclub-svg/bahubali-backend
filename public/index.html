@@ -725,6 +725,12 @@
             <input type="checkbox" id="addon_drop" onchange="updatePricing()"> Drop to Vidhana Soudha on 4th evening — ₹300
           </label>
         </div>
+        <div class="field addon-box" id="addons100Single" style="display:none;">
+          <label class="field-label">Optional add-on (100 km runners)</label>
+          <label class="checkbox-line addon-line">
+            <input type="checkbox" id="addon100_roomstay" onchange="updatePricing()"> Room Stay (Twin-Sharing) — ₹1,200
+          </label>
+        </div>
       </div>
 
       <div id="multiRaceSelectors" style="display:none;">
@@ -888,6 +894,18 @@
             });
           }
         }
+
+        const addons100Box = document.getElementById(`addons100_${i}`);
+        if (addons100Box) {
+          const show100 = val === '100';
+          addons100Box.style.display = show100 ? '' : 'none';
+          const roomstayEl = document.getElementById(`addon100_${i}_roomstay`);
+          if (show100) {
+            if (roomstayEl && roomstayEl.checked) addonsTotal += ADDON_PRICES.roomstay;
+          } else {
+            if (roomstayEl) roomstayEl.checked = false;
+          }
+        }
       }
     } else {
       const km = document.getElementById('raceKm').value;
@@ -903,6 +921,16 @@
           const el = document.getElementById('addon_' + k);
           if (el) el.checked = false;
         });
+      }
+
+      const addons100Single = document.getElementById('addons100Single');
+      const show100 = km === '100';
+      addons100Single.style.display = show100 ? '' : 'none';
+      const roomstay100El = document.getElementById('addon100_roomstay');
+      if (show100) {
+        if (roomstay100El && roomstay100El.checked) addonsTotal += ADDON_PRICES.roomstay;
+      } else {
+        if (roomstay100El) roomstay100El.checked = false;
       }
     }
 
@@ -1082,7 +1110,14 @@
       <label class="checkbox-line addon-line">
         <input type="checkbox" id="addon_${i}_drop" onchange="updatePricing()"> Drop to Vidhana Soudha on 4th evening — ₹300
       </label>
-    </div>`;
+    </div>
+    <div class="field addon-box" id="addons100_${i}" style="display:none; margin-top:-8px; margin-bottom:20px;">
+      <label class="field-label">Runner ${i} — Optional add-on (100 km)</label>
+      <label class="checkbox-line addon-line">
+        <input type="checkbox" id="addon100_${i}_roomstay" onchange="updatePricing()"> Room Stay (Twin-Sharing) — ₹1,200
+      </label>
+    </div>
+    `;
   }
 
   function generateFeeRaceSelectors(n) {
