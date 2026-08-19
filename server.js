@@ -5,6 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const Razorpay = require('razorpay');
+const nodemailer = require('nodemailer');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -24,6 +25,111 @@ if (RAZORPAY_KEY_ID && RAZORPAY_KEY_SECRET) {
   razorpay = new Razorpay({ key_id: RAZORPAY_KEY_ID, key_secret: RAZORPAY_KEY_SECRET });
 } else {
   console.warn('⚠️  RAZORPAY_KEY_ID / RAZORPAY_KEY_SECRET not set in .env — payment endpoints will return an error until you add them.');
+}
+
+// ---------- Email setup ----------
+// Gmail: use an App Password (not your normal Gmail password) — https://myaccount.google.com/apppasswords
+const EMAIL_USER = process.env.EMAIL_USER || '';
+const EMAIL_PASS = process.env.EMAIL_PASS || '';
+const EMAIL_FROM = process.env.EMAIL_FROM || EMAIL_USER;
+
+let mailTransporter = null;
+if (EMAIL_USER && EMAIL_PASS) {
+  mailTransporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: { user: EMAIL_USER, pass: EMAIL_PASS }
+  });
+} else {
+  console.warn('⚠️  EMAIL_USER / EMAIL_PASS not set in .env — confirmation emails will be skipped (logged only) until configured.');
+}
+
+function generateBibNumber() {
+  const random = crypto.randomBytes(3).toString('hex').toUpperCase(); // 6 hex chars
+  return `BAHU-${random}`;
+}
+
+function formatAddonsList(addons) {
+  if (!addons) return [];
+  const labels = {
+    pickup: 'Pickup from Vidhana Soudha (3rd evening) — ₹300',
+    dinner: 'Dinner — ₹300',
+    roomstay: 'Room Stay (Twin-Sharing) — ₹1,200',
+    drop: 'Drop to Vidhana Soudha (4th evening) — ₹300'
+  };
+  return Object.keys(labels).filter(k => addons[k]).map(k => labels[k]);
+}
+
+function buildRunnerSummaryText(runner, bibNumber) {
+  const addons = formatAddonsList(runner.addons);
+  const fullName = `${(runner.firstName || '')} ${(runner.lastName || '')}`.trim();
+  const lines = [
+    `  Bib Number: ${bibNumber}`,
+    `  Name: ${fullName}`,
+    `  Race Distance: ${runner.raceDistanceKm ? runner.raceDistanceKm + ' km' : 'Not specified'}`
+  ];
+  if (addons.length) {
+    lines.push(`  Add-ons: ${addons.join(', ')}`);
+  } else {
+    lines.push(`  Add-ons: None`);
+  }
+  return lines.join('\n');
+}
+
+async function sendConfirmationEmail(record) {
+  const toEmail = record.entryType === 'single'
+    ? (record.runner && record.runner.email)
+    : (record.runners && record.runners[0] && record.runners[0].email);
+
+  if (!toEmail) {
+    console.warn(`No email address found on registration ${record.id}; skipping confirmation email.`);
+    return;
+  }
+
+  const runners = record.entryType === 'single' ? [record.runner] : (record.runners || []);
+  const bibNumbers = runners.map(() => generateBibNumber());
+  record.bibNumbers = bibNumbers;
+
+  const runnerBlocks = runners.map((r, idx) => buildRunnerSummaryText(r, bibNumbers[idx])).join('\n\n');
+  const amountPaid = typeof record.amount === 'number' ? `₹${record.amount.toLocaleString('en-IN')}` : 'N/A';
+  const primaryName = runners[0] ? `${runners[0].firstName || ''} ${runners[0].lastName || ''}`.trim() : 'Runner';
+
+  const subject = `You're confirmed for Bahubali! Registration ${record.id}`;
+  const text = `Dear ${primaryName || 'Runner'},
+
+Thank you for being part of Bahubali — we're thrilled to have you join us for this event!
+
+Your registration is confirmed. Here are your details:
+
+${runnerBlocks}
+
+Amount Paid: ${amountPaid}
+Registration ID: ${record.id}
+
+If you have any questions or need assistance, please reach out to:
+  Devi: 9886077317
+  Praveen Shetty: 9663503000
+
+See you at the start line!
+
+Warm regards,
+Team Bahubali`;
+
+  if (!mailTransporter) {
+    console.warn(`EMAIL not configured — would have sent confirmation to ${toEmail} for ${record.id}:\n${text}`);
+    return;
+  }
+
+  try {
+    await mailTransporter.sendMail({
+      from: `"Bahubali Registration" <${EMAIL_FROM}>`,
+      to: toEmail,
+      subject,
+      text
+    });
+    console.log(`Confirmation email sent to ${toEmail} for registration ${record.id}`);
+  } catch (err) {
+    console.error(`Failed to send confirmation email for ${record.id}:`, err);
+  }
 }
 
 // ---------- Admin protection ----------
@@ -184,7 +290,7 @@ app.post('/api/create-order', async (req, res) => {
 });
 
 // ---------- Verify payment signature after Razorpay Checkout success ----------
-app.post('/api/verify-payment', (req, res) => {
+app.post('/api/verify-payment', async (req, res) => {
   const { registrationId, razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body || {};
 
   if (!registrationId || !razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
@@ -214,6 +320,11 @@ app.post('/api/verify-payment', (req, res) => {
 
   if (!isValid) {
     return res.status(400).json({ ok: false, error: 'Signature verification failed.' });
+  }
+
+  if (record) {
+    await sendConfirmationEmail(record);
+    writeRegistrations(registrations); // persist bib numbers added inside sendConfirmationEmail
   }
 
   res.json({ ok: true, status: 'paid' });
