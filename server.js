@@ -150,13 +150,18 @@ app.post('/api/create-order', async (req, res) => {
     return res.status(400).json({ error: 'registrationId and amountInRupees are required.' });
   }
 
+  const amountInPaise = Math.round(amountInRupees * 100);
+  if (amountInPaise < 100) {
+    return res.status(400).json({ error: 'Amount must be at least ₹1 (100 paise).' });
+  }
+
   const registrations = readRegistrations();
   const record = registrations.find(r => r.id === registrationId);
   if (!record) return res.status(404).json({ error: 'Registration not found.' });
 
   try {
     const order = await razorpay.orders.create({
-      amount: Math.round(amountInRupees * 100), // paise
+      amount: amountInPaise,
       currency: 'INR',
       receipt: registrationId,
       notes: { registrationId }
@@ -168,7 +173,13 @@ app.post('/api/create-order', async (req, res) => {
     res.json({ ok: true, order, keyId: RAZORPAY_KEY_ID });
   } catch (err) {
     console.error('Razorpay order creation failed:', err);
-    res.status(500).json({ error: 'Failed to create Razorpay order.' });
+    const statusCode = err && (err.statusCode === 401 || (err.error && err.error.code === 'BAD_REQUEST_ERROR' && /key/i.test(err.error.description || '')))
+      ? 401
+      : 500;
+    const message = statusCode === 401
+      ? 'Razorpay authentication failed. Check RAZORPAY_KEY_ID / RAZORPAY_KEY_SECRET.'
+      : 'Failed to create Razorpay order.';
+    res.status(statusCode).json({ error: message });
   }
 });
 
@@ -176,8 +187,8 @@ app.post('/api/create-order', async (req, res) => {
 app.post('/api/verify-payment', (req, res) => {
   const { registrationId, razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body || {};
 
-  if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
-    return res.status(400).json({ error: 'Missing Razorpay payment fields.' });
+  if (!registrationId || !razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+    return res.status(400).json({ error: 'Missing required fields (registrationId, razorpay_order_id, razorpay_payment_id, razorpay_signature).' });
   }
   if (!RAZORPAY_KEY_SECRET) {
     return res.status(500).json({ error: 'Server missing RAZORPAY_KEY_SECRET.' });
