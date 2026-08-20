@@ -262,7 +262,7 @@ app.post('/api/create-order', async (req, res) => {
       amount: amountInPaise,
       currency: 'INR',
       receipt: registrationId,
-      notes: { registrationId }
+      notes: { registrationId, origin: 'enduroverse.in' }
     });
 
     record.razorpayOrderId = order.id;
