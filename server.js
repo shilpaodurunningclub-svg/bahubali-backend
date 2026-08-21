@@ -1,4 +1,5 @@
 require('dotenv').config();
+require('dns').setDefaultResultOrder('ipv4first'); // Render has no outbound IPv6 route; avoid ENETUNREACH on SMTP
 const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
@@ -36,7 +37,10 @@ const EMAIL_FROM = process.env.EMAIL_FROM || EMAIL_USER;
 let mailTransporter = null;
 if (EMAIL_USER && EMAIL_PASS) {
   mailTransporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
+    family: 4, // force IPv4 — Render has no outbound IPv6 route
     auth: { user: EMAIL_USER, pass: EMAIL_PASS }
   });
 } else {

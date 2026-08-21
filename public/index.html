@@ -1327,6 +1327,28 @@
     window.scrollTo(0, 0);
   }
 
+  function resetToMainPage() {
+    const form = document.getElementById('regForm');
+    form.reset();
+    document.getElementById('runnersContainer').innerHTML = '';
+    document.getElementById('multiRaceSelectList').innerHTML = '';
+    toggleMedicalDetail('medicalDetail', false);
+    document.getElementById('couponMsg').textContent = '';
+    document.getElementById('discountRow').style.display = 'none';
+    currentRegistrationId = null;
+    lastBase = 0;
+    lastGst = 0;
+    lastAddons = 0;
+    lastKmLabel = '';
+    setEntry('single');
+    updatePricing();
+    showFileName('prevCert', 'prevCertName');
+
+    document.getElementById('paymentPage').style.display = 'none';
+    form.style.display = '';
+    window.scrollTo(0, 0);
+  }
+
   async function payNow() {
     const btn = event && event.target;
     const originalText = btn ? btn.textContent : '';
@@ -1384,7 +1406,8 @@
             });
             const verifyData = await verifyRes.json();
             if (verifyRes.ok && verifyData.ok) {
-              alert('Payment successful! Registration ID: ' + currentRegistrationId);
+              alert('Payment successful! Registration ID: ' + currentRegistrationId + '\n\nA confirmation email is on its way to you.');
+              resetToMainPage();
             } else {
               alert('Payment could not be verified. Please contact support with Registration ID: ' + currentRegistrationId);
             }
