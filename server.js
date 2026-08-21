@@ -41,6 +41,9 @@ if (EMAIL_USER && EMAIL_PASS) {
     port: 465,
     secure: true,
     family: 4, // force IPv4 — Render has no outbound IPv6 route
+    lookup: (hostname, options, callback) => {
+      require('dns').lookup(hostname, { family: 4 }, callback);
+    },
     auth: { user: EMAIL_USER, pass: EMAIL_PASS }
   });
 } else {
