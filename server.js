@@ -216,6 +216,49 @@ app.get('/api/registrations-summary', requireAdmin, (req, res) => {
   res.json(summary);
 });
 
+// ---------- Test email sending (admin only) ----------
+// Fires the exact same email code path as a real payment, without touching Razorpay or saving a registration.
+// Usage: GET /api/test-email?key=ADMIN_KEY&to=someone@example.com
+app.get('/api/test-email', requireAdmin, async (req, res) => {
+  const to = req.query.to;
+  if (!to) {
+    return res.status(400).json({ error: 'Add &to=youremail@example.com to the URL.' });
+  }
+
+  if (!mailTransporter) {
+    return res.status(500).json({
+      error: 'Email transporter is not configured (EMAIL_USER / EMAIL_PASS missing).'
+    });
+  }
+
+  const testRecord = {
+    id: 'TEST-' + Date.now(),
+    entryType: 'single',
+    amount: 4999,
+    runner: {
+      firstName: 'Test',
+      lastName: 'Runner',
+      email: to,
+      raceDistanceKm: '60',
+      addons: { dinner: true, roomstay: true }
+    }
+  };
+
+  try {
+    const runnerBlocks = buildRunnerSummaryText(testRecord.runner);
+    await mailTransporter.sendMail({
+      from: `"Bahubali Registration" <${EMAIL_FROM}>`,
+      to,
+      subject: 'TEST — Bahubali email delivery check',
+      text: `This is a test email from the Bahubali Registration backend.\n\nIf you're reading this, email sending is working correctly.\n\n${runnerBlocks}`
+    });
+    res.json({ ok: true, message: `Test email sent successfully to ${to}. Check inbox (and spam).` });
+  } catch (err) {
+    console.error('Test email failed:', err);
+    res.status(500).json({ ok: false, error: err.message, code: err.code });
+  }
+});
+
 // ---------- Delete one registration (admin only) ----------
 app.delete('/api/registrations/:id', requireAdmin, (req, res) => {
   const list = readRegistrations();
